@@ -127,6 +127,6 @@ struct counterBuilder: View {
             .frame(width: 250, height: 80)
             .padding(.leading)
         }
-        .frame(width: .infinity, height: 120)
+        .frame(height: 120)
     }
 }
