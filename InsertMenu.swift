@@ -2,34 +2,50 @@ import SwiftUI
 import SwiftData
 
 struct InsertMenu: View {
-    @Binding var newName : String
-    @Binding var newCounter : String
-    @Binding var newMaxCount : Float
-    @Binding var newColor : String
+    //Vars for building new players
+    @State private var newName : String = ""
+    @State private var newCounter : String = ""
+    @State private var newMaxCount : Float = 100.0
+    @State private var newColor : String = "Red"
+    //Stores Entity List in memory
     @Environment(\.modelContext) var context
     @Query(sort: [SortDescriptor(\Entity.id)]) var entities : [Entity] = []
+    //Var determining when user goes to Map view
+    @AppStorage("goToMap") var goToMap = false
     var body: some View {
+        //HStack for Row 1
         HStack{
+            //Textfields for input on player/counter details
             TextField("Enter entity name", text: $newName)
                 .textFieldStyle(.roundedBorder)
             TextField("Enter counter name", text: $newCounter)
                 .textFieldStyle(.roundedBorder)
             TextField("Enter Max Count", value: $newMaxCount, format: .number)
                 .textFieldStyle(.roundedBorder)
+            
+            //Button to add a new entity or add a new counter to an existing entity
             Button(action: {
                 //Determines if added Entity/Counter is a new one or adding in to an existing one
                 var addToExisting = false
                 for i in entities.indices {
                     if(entities[i].id == newName) {
                         addToExisting = true
+                        
+                        //Adds counter to existing entity
                         entities[i].counters.append(Counter(name: newCounter, color: newColor, max: newMaxCount))
                     }
                 }
+                
+                //Makes new entity
                 if (addToExisting == false) {
                     context.insert(Entity(name: newName, counterName: newCounter, counterMax: newMaxCount))
                 }
+                
+                //Resets Textfields
                 newName = ""
                 newCounter = ""
+                newMaxCount = 100
+
             }, label: {
                 Text("Add")
                     .bold()
@@ -43,19 +59,28 @@ struct InsertMenu: View {
         }
         .padding(.horizontal)
         .padding(.top)
-        //Picker for Color of slider and Save Button
+        //End of HStack for Row 1
+        
+        //HStack for Row 2
         HStack (spacing: 30) {
+            
+            //HStack for picking the color of a new slider/counter
             HStack (spacing: 0) {
                 Text("Slider Color: ")
-                Picker("idk", selection: $newColor, content: { 
+                //Pick between Blue, Red, and Purple
+                Picker("", selection: $newColor, content: {
                     Text("Blue").tag("Blue")
                     Text("Red").tag("Red")
                     Text("Purple").tag("Purple")
                 })
+                //Options colored correspondingly
                 .tint(
                     newColor == "Red" ? .red : newColor == "Blue" ? .blue : .purple
                 )
             }
+            //End of HStack for picking the color of a new slider/counter
+            
+            //Save Button for both Entity list and Object list used in the Map
             Button(action: {
                 try? context.save()
             }, label: {
@@ -69,8 +94,10 @@ struct InsertMenu: View {
                     }
                     .frame(width: 100, height: 40)
             })
+            
+            //Button to go to Map screen
             Button(action: {
-                UserDefaults.standard.set(true, forKey: "goToMap")
+                goToMap = true
             }, label: {
                 Text(">>")
                     .font(.system(size: 20, weight: .black, design: .rounded))
