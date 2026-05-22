@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-struct counterBuilder: View {
+struct CounterBuilder: View {
     //Various vars used for displaying counter
     @State var count : Float
     @State var playerName : String
