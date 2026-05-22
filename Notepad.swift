@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct Notepad: View {
-    @AppStorage("notes") var notes = ""
+    @AppStorage("notes") private var notes = ""
     @State private var tempNotes = ""
-    @AppStorage("notesOffsetX") var notesOffsetX = 250.0
-    @AppStorage("notesOffsetY") var notesOffsetY = 250.0
-    @State var currentNotesOffsetX = 0.0
-    @State var currentNotesOffsetY = 0.0
+    @AppStorage("notesOffsetX") private var notesOffsetX = 250.0
+    @AppStorage("notesOffsetY") private var notesOffsetY = 250.0
+    @State private var currentNotesOffsetX = 0.0
+    @State private var currentNotesOffsetY = 0.0
+    @State private var dragStartX = 0.0
+    @State private var dragStartY = 0.0
     var body: some View {
         ZStack {
             TextEditor(text: $tempNotes)
@@ -22,8 +24,12 @@ struct Notepad: View {
                 .offset(x: currentNotesOffsetX - 120, y: currentNotesOffsetY)
                 .onAppear {
                     tempNotes = notes
+                    
                     currentNotesOffsetX = notesOffsetX
                     currentNotesOffsetY = notesOffsetY
+                    
+                    dragStartX = notesOffsetX
+                    dragStartY = notesOffsetY
                 }
                 .onDisappear {
                     notes = tempNotes
@@ -45,10 +51,13 @@ struct Notepad: View {
                 .gesture(
                     DragGesture()
                         .onChanged({ gest in
-                            currentNotesOffsetX = gest.location.x
-                            currentNotesOffsetY = gest.location.y
+                            currentNotesOffsetX = dragStartX + gest.translation.width
+                            currentNotesOffsetY = dragStartY + gest.translation.height
                         })
                         .onEnded({ _ in
+                            dragStartX = currentNotesOffsetX
+                            dragStartY = currentNotesOffsetY
+                            
                             notesOffsetX = currentNotesOffsetX
                             notesOffsetY = currentNotesOffsetY
                         })
