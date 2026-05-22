@@ -2,20 +2,12 @@ import SwiftUI
 import SwiftData
 
 struct CounterBuilder: View {
-    //Various vars used for displaying counter
-    @State var count : Float
-    @State var playerName : String
-    @State var counterName : String
-    @State var counterColor : String
-    @State var counterMax : Float
     //Vars used for deleting counters and entities when needed
     @Binding var counters : [Counter]
-    @Binding var player : Entity
-    @State var counter : Counter
-    //Gets Entity List from memory
+    @Bindable var player : Entity
+    @Bindable var counter : Counter
     @Environment(\.modelContext) var context
-    @Query(sort: [SortDescriptor(\Entity.id)]) var playerList : [Entity] = []
-    //vars for showing certain buttons
+    //Vars for when to show certain buttons
     @AppStorage("showIncrementer") var showIncrementer = true
     @AppStorage("showTrashCan") var showTrashCan = true
     var body: some View {
@@ -37,14 +29,14 @@ struct CounterBuilder: View {
                                 .bold()
                         }
                         .fixedSize()
-                        Text(": \(Int(count))")
+                        Text(": \(Int(counter.count))")
                             .bold()
                             .frame(alignment: .leading)
                     }
                 }
                 //Pre-built name that if held hides/unhides counter
                 else {
-                    Text("\(playerName)'s \(counterName): \(Int(count))")
+                    Text(String("\(player.id)'s \(counter.name): \(Int(counter.count))"))
                         .bold()
                         .onLongPressGesture(minimumDuration: 0.7) { 
                             counter.hidden.toggle()
@@ -55,7 +47,7 @@ struct CounterBuilder: View {
                 if(showTrashCan) {
                     Button(action: {
                         counters.removeAll { deleteCounter in
-                            deleteCounter.name == counterName
+                            deleteCounter.name == counter.name
                         }
                         if(counters.isEmpty) {
                             context.delete(player)
@@ -67,14 +59,14 @@ struct CounterBuilder: View {
                 //Incrementer and decrementer
                 if(showIncrementer) {
                     Button(action: {
-                        if (counterMax >= 100000) {
-                            count += 1000
+                        if (counter.maxCount >= 100000) {
+                            counter.count += 1000
                         }
-                        else if(counterMax >= 10000) {
-                            count += 100
+                        else if(counter.maxCount >= 10000) {
+                            counter.count += 100
                         }
                         else {
-                            count += 1
+                            counter.count += 1
                         }
                     }, label: {
                         Image(systemName: "plus.circle")
@@ -87,14 +79,14 @@ struct CounterBuilder: View {
                             }
                     })
                     Button(action: {
-                        if (counterMax >= 100000) {
-                            count -= 1000
+                        if (counter.maxCount >= 100000) {
+                            counter.count -= 1000
                         }
-                        else if(counterMax >= 10000) {
-                            count -= 100
+                        else if(counter.maxCount >= 10000) {
+                            counter.count -= 100
                         }
                         else {
-                            count -= 1
+                            counter.count -= 1
                         }
                     }, label: {
                         Image(systemName: "minus.circle")
@@ -110,18 +102,15 @@ struct CounterBuilder: View {
             }
             .frame(height: 0)
             //Gauge with a slider on top
-            Gauge(value: count, in: 0...counterMax, label: {
+            Gauge(value: counter.count, in: 0...counter.maxCount, label: {
             })
             .overlay {
-                Slider(value: $count, in: 0...counterMax)
-                    .onChange(of: count) { oldValue, newValue in
-                        counter.count = count
-                    }
+                Slider(value: $counter.count, in: 0...counter.maxCount)
                     .scaleEffect(x: 1, y: 0.8)
             }
             //Alters color based on picked color
             .tint(
-                counter.hidden ? .gray : counterColor == "Red" ? .red : counterColor == "Blue" ? .blue : .purple
+                counter.hidden ? .gray : counter.color == "Red" ? .red : counter.color == "Blue" ? .blue : .purple
             )
             .scaleEffect(x: 1, y: 2)
             .frame(width: 250, height: 80)
