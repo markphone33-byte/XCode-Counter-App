@@ -10,18 +10,20 @@ import SwiftUI
 struct Notepad: View {
     @AppStorage("notes") var notes = ""
     @State private var tempNotes = ""
-    @AppStorage("notesPosX") var notesPosX = 250.0
-    @AppStorage("notesPosY") var notesPosY = 250.0
-    @State var currentNotesPos = CGPointMake(0, 0)
+    @AppStorage("notesOffsetX") var notesOffsetX = 250.0
+    @AppStorage("notesOffsetY") var notesOffsetY = 250.0
+    @State var currentNotesOffsetX = 0.0
+    @State var currentNotesOffsetY = 0.0
     var body: some View {
         ZStack {
             TextEditor(text: $tempNotes)
                 .frame(width: 190, height: 290)
                 .border(.black, width: 4)
-                .position(currentNotesPos.y == 0 && currentNotesPos.x == 0 ? CGPointMake(notesPosX, notesPosY) : currentNotesPos)
-                .offset(x: -120)
+                .offset(x: currentNotesOffsetX - 120, y: currentNotesOffsetY)
                 .onAppear {
                     tempNotes = notes
+                    currentNotesOffsetX = notesOffsetX
+                    currentNotesOffsetY = notesOffsetY
                 }
                 .onDisappear {
                     notes = tempNotes
@@ -39,15 +41,16 @@ struct Notepad: View {
                 }
                 .frame(width: 40, height: 40)
             //Positions based on vars and changing those vars based on a drag gesture
-                .position(currentNotesPos.y == 0 && currentNotesPos.x == 0 ? CGPointMake(notesPosX, notesPosY) : currentNotesPos)
+                .offset(x: currentNotesOffsetX, y: currentNotesOffsetY)
                 .gesture(
                     DragGesture()
                         .onChanged({ gest in
-                            currentNotesPos = gest.location
+                            currentNotesOffsetX = gest.location.x
+                            currentNotesOffsetY = gest.location.y
                         })
                         .onEnded({ _ in
-                            notesPosX = currentNotesPos.x
-                            notesPosY = currentNotesPos.y
+                            notesOffsetX = currentNotesOffsetX
+                            notesOffsetY = currentNotesOffsetY
                         })
                 )
         }
