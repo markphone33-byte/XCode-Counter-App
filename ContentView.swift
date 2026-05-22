@@ -5,11 +5,6 @@ struct ContentView: View {
     //Stores Entity List in memory
     @Environment(\.modelContext) var context
     @Query(sort: [SortDescriptor(\Entity.id)]) var entities : [Entity] = []
-    //Vars used to make new Entity/Player
-    @State var newName = ""
-    @State var newCounter = ""
-    @State var newColor = "Red"
-    @State var newMaxCount : Float = 100.0
     //Var determining when user goes to Map view
     @AppStorage("goToMap") var goToMap = false
     var body: some View {
@@ -20,17 +15,19 @@ struct ContentView: View {
                 //Players and UI
                 LazyVStack {
                     //Textfields and Button for adding a new Entity/Player
-                    InsertMenu(newName: $newName, newCounter: $newCounter, newMaxCount: $newMaxCount, newColor: $newColor)
+                    InsertMenu()
                     
                     //Makes a Player using PlayerBuilder for each Entity in Entity List
-                        ForEach(entities) { entity in
-                            playerBuilder(player: entity)
-                        }
+                    ForEach(entities) { entity in
+                        PlayerBuilder(player: entity)
+                    }
                         
                         //Toggles for showing incrementer and trash can/delete button
+                    VStack {
                         Toggles()
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .offset(x: 20)
+                    }
                     
                 }
                 //End of VStack creating players and UI
@@ -42,9 +39,7 @@ struct ContentView: View {
             .background(Color(red: 0.3, green: 0.4, blue: 0.6, opacity: 0.3))
             //When goToMap is true navigates to Map view
             .navigationDestination(isPresented: $goToMap) {
-                LazyVStack {
-                    Map()
-                }
+                Map()
             }
         }
     }
@@ -54,8 +49,8 @@ struct ContentView: View {
 
 struct Toggles: View {
     //Vars tracking incrementer and trash can settings
-    @AppStorage("showIncrementer") var showIncrementer = true
-    @AppStorage("showTrashCan") var showTrashCan = true
+    @AppStorage("showIncrementer") private var showIncrementer = true
+    @AppStorage("showTrashCan") private var showTrashCan = true
     var body: some View {
         Toggle(isOn: $showIncrementer, label: {
             Text("Show Incrementer:")
