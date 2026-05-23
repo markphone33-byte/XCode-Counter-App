@@ -19,14 +19,13 @@ struct Map: View {
     @AppStorage("showColorPicker") var showColorPicker : Bool = true
     @AppStorage("bottomBarSize") var bottomBarSize = 400.0
     @AppStorage("showWheel") var showWheel = false
-    @AppStorage("isOutline") var isOutline = false
     @State var isSimpleDraw = false
     @AppStorage("showCopyButton") var showCopyButton : Bool = true
     @State var tempDrawOn = false
     var body: some View {
         ZStack {
-            RadialGradient(gradient: Gradient(colors: [.cyan, .green, .orange, .red]), center: .center, startRadius: 0, endRadius: size/1.4)
-                .overlay{                    
+            RadialGradient(gradient: Gradient(colors: [.gray, .green, .orange, .red]), center: .center, startRadius: 0, endRadius: size/1.4)
+                .overlay{
                     ForEach(objectList.sorted(by: { o1, o2 in
                         if(o1.order != o2.order) {
                             return o1.order < o2.order
