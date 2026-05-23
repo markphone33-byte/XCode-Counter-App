@@ -38,7 +38,7 @@ struct BottomBar: View {
                     .frame(width: CGFloat(8 * objectType.count) + 50, height: 70)
                 
                 Button(action: {
-                    context.insert(Object(x: -offsetWidth, y: -offsetHeight, size: objectSize, isOutline: false))
+                    context.insert(Object(x: -offsetWidth, y: -offsetHeight, size: objectSize))
                     try? context.save()
                 }, label: {
                     RoundedRectangle(cornerRadius: 10)

@@ -17,17 +17,16 @@ class Object {
     var points : [CustomCGPoint] = []
     var offsetX : Double = 0.0
     var offsetY : Double = 0.0
-    var strokeActive : Bool = false
+    var isSimpleDraw : Bool = false
     var cardType : String = ""
     var order : Int = 0
     
-    init(x : Double, y: Double, size: Double, isOutline: Bool) {
+    init(x : Double, y: Double, size: Double) {
         posX = x
         posY = y
         image = nil
         isCircle = true
         self.size = size
-        strokeActive = isOutline
         opacity = 1.0
     }
     
@@ -38,7 +37,7 @@ class Object {
         isCircle = false
         self.size = size
         points = pointList
-        strokeActive = isOutline
+        isSimpleDraw = isOutline
         opacity = 1.0
     }
     

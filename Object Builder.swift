@@ -5,19 +5,11 @@ struct ObjectBuilder: View {
     @Binding var type : String
     var body: some View {
         if(object.isCircle) {
-            if(!object.strokeActive) {
-                Circle()
-                    .modifier(dragGest(object: object))
-                    .modifier(haveColorPicker(object: object))
-                    .modifier(objectDelete(object: object))
-            }
-            else {
-                Circle()
-                    .stroke(lineWidth: object.size/15)
-                    .modifier(dragGest(object: object))
-                    .modifier(haveColorPicker(object: object))
-                    .modifier(objectDelete(object: object))
-            }
+            Circle()
+                .modifier(frameAndPosition(object: object))
+                .modifier(haveColorPicker(object: object))
+                .modifier(objectDelete(object: object))
+                .modifier(dragGest(object: object))
             
         }
         else if(object.points.isEmpty){
@@ -38,13 +30,14 @@ struct ObjectBuilder: View {
                                 .frame(width: object.size * 1.1, height: object.size * 1.1)
                         }
                     }
-                    .modifier(dragGest(object: object))
+                    .modifier(frameAndPosition(object: object))
                     .modifier(objectDelete(object: object))
                     .modifier(PhotoCopyButton(object: object, type: type))
+                    .modifier(dragGest(object: object))
             }
         }
         else{
-            if(!object.strokeActive){
+            if(!object.isSimpleDraw){
                 Path { path in
                     let first = object.points.first
                     path.move(to: first!.toCGPoint())
