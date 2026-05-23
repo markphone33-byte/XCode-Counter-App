@@ -40,18 +40,36 @@ struct objectDelete: ViewModifier {
 }
 
 struct dragGest: ViewModifier {
-    @State var object: Object
+    var object: Object
+    @State private var dragStartX = 0.0
+    @State private var dragStartY = 0.0
+    func body(content: Content) -> some View {
+        content
+            .offset(x: object.offsetX, y: object.offsetY)
+            .gesture(object.draggable ? DragGesture()
+                    .onChanged({ gest in
+                        object.offsetX = dragStartX + gest.translation.width
+                        object.offsetY = dragStartY + gest.translation.height
+                    })
+                    .onEnded({ _ in
+                        dragStartX = object.offsetX
+                        dragStartY = object.offsetY
+                    })
+                : nil
+            )
+            .onAppear {
+                dragStartX = object.offsetX
+                dragStartY = object.offsetY
+            }
+
+    }
+}
+
+struct frameAndPosition: ViewModifier {
+    var object: Object
     func body(content: Content) -> some View {
         content
             .position(CGPoint(x: object.posX, y: object.posY))
-            .gesture(object.draggable ?
-                     DragGesture()
-                .onChanged({ gest in
-                    object.posX = gest.location.x
-                    object.posY = gest.location.y
-                })
-                     : nil
-            )
             .frame(width: object.size, height: object.size)
     }
 }
@@ -73,7 +91,7 @@ struct haveColorPicker: ViewModifier {
                     ColorPicker("", selection: $colorPick)
                         .scaleEffect(object.size < 100 ? object.size * 0.01 : 1)
                         .position(object.getPos())
-                        .offset(x: object.offsetX + 120/object.size, y: object.offsetY)
+                        .offset(x: cbrt(object.size))
                         .onChange(of: colorPick) { oldValue, newValue in
                             circleColor = UIColor(colorPick)
                             if circleColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
@@ -86,7 +104,6 @@ struct haveColorPicker: ViewModifier {
                 } else if (showColorPicker) {
                     ColorPicker("", selection: $colorPick)
                         .scaleEffect(object.size < 100 ? object.size * 0.01 : 1)
-                        .offset(x: object.offsetX + 120/object.size, y: object.offsetY)
                         .onChange(of: colorPick) { oldValue, newValue in
                             circleColor = UIColor(colorPick)
                             if circleColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
