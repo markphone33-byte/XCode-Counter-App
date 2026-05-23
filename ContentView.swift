@@ -40,6 +40,9 @@ struct ContentView: View {
             //When goToMap is true navigates to Map view
             .navigationDestination(isPresented: $goToMap) {
                 Map()
+                    .onDisappear {
+                        try? context.save()
+                    }
             }
         }
     }
