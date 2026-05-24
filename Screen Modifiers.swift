@@ -19,18 +19,6 @@ struct screenDragGest: ViewModifier {
                         offsetWidth += gest.translation.width
                         offsetHeight += gest.translation.height
                         dragOffset = .zero
-                        //                        if(offset.width > (size/2 - 200)) {
-                        //                            offset.width = (size/2 - 200)
-                        //                        }
-                        //                        else if(offset.width < (-size/2 + 200)) {
-                        //                            offset.width = (-size/2 + 200)
-                        //                        }
-                        //                        if(offset.height > (size/2 - 200)) {
-                        //                            offset.height = (size/2 - 200)
-                        //                        }
-                        //                        else if(offset.height < (-size/2 + 200)) {
-                        //                            offset.height = (-size/2 + 200)
-                        //                        }
                     })
             )
     }

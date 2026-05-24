@@ -41,7 +41,7 @@ struct Map: View {
                         ObjectBuilder(object: object, type: $objectType)
                     }
                     Drawing(objectSize: $objectSize, isSimpleDraw: $isSimpleDraw, isDrawing: $isDrawing)
-                    tempDrawing(objectSize: $objectSize, tempDrawOn: $tempDrawOn)
+                    TempDrawing(objectSize: $objectSize, tempDrawOn: $tempDrawOn)
                 }
                 .modifier(screenDragGest(offsetWidth: $offsetWidth, offsetHeight: $offsetHeight, dragOffset: $dragOffset, size: size))
                 .modifier(zoomGest(scale: scale, lastScale: lastScale))

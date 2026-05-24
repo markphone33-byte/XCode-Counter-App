@@ -46,7 +46,7 @@ struct Drawing: View {
     }
 }
 
-struct tempDrawing: View {
+struct TempDrawing: View {
     @Binding var objectSize : Double
     @Binding var tempDrawOn : Bool
     @State var tempPathList : [[CustomCGPoint]] = []
