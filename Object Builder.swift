@@ -1,8 +1,19 @@
 import SwiftUI
 
 struct ObjectBuilder: View {
-    @State var object : Object
+    let object : Object
     @Binding var type : String
+    private var objectPath: Path {
+        Path { path in
+            guard let first = object.points.first else { return }
+
+            path.move(to: first.toCGPoint())
+
+            for point in object.points.dropFirst() {
+                path.addLine(to: point.toCGPoint())
+            }
+        }
+    }
     var body: some View {
         if(object.isCircle) {
             Circle()
@@ -10,7 +21,6 @@ struct ObjectBuilder: View {
                 .modifier(haveColorPicker(object: object))
                 .modifier(objectDelete(object: object))
                 .modifier(dragGest(object: object))
-            
         }
         else if(object.points.isEmpty){
             if let data = object.image, let image = UIImage(data: data) {
@@ -37,30 +47,18 @@ struct ObjectBuilder: View {
             }
         }
         else{
-            if(!object.isSimpleDraw){
-                Path { path in
-                    let first = object.points.first
-                    path.move(to: first!.toCGPoint())
-                    for point in object.points.dropFirst() {
-                        path.addLine(to: point.toCGPoint())
-                    }
-                }
-                .modifier(pathDragGest(object: object))
-                .modifier(pathHaveColorPicker(object: object))
-                .modifier(pathObjectDelete(object: object))
+            if(object.isSimpleDraw){
+                objectPath
+                    .stroke(lineWidth: object.size/5)
+                    .modifier(pathDragGest(object: object))
+                    .modifier(pathHaveColorPicker(object: object))
+                    .modifier(pathObjectDelete(object: object))
             }
             else {
-                Path { path in
-                    let first = object.points.first
-                    path.move(to: first!.toCGPoint())
-                    for point in object.points.dropFirst() {
-                        path.addLine(to: point.toCGPoint())
-                    }
-                }
-                .stroke(lineWidth: object.size/5)
-                .modifier(pathDragGest(object: object))
-                .modifier(pathHaveColorPicker(object: object))
-                .modifier(pathObjectDelete(object: object))
+                objectPath
+                    .modifier(pathDragGest(object: object))
+                    .modifier(pathHaveColorPicker(object: object))
+                    .modifier(pathObjectDelete(object: object))
             }
         }
     }
