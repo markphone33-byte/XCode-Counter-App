@@ -47,19 +47,16 @@ struct ObjectBuilder: View {
             }
         }
         else{
-            if(object.isSimpleDraw){
-                objectPath
-                    .stroke(lineWidth: object.size/5)
-                    .modifier(pathDragGest(object: object))
-                    .modifier(pathHaveColorPicker(object: object))
-                    .modifier(pathObjectDelete(object: object))
+            Group {
+                if(object.isSimpleDraw) {
+                    objectPath.stroke(lineWidth: object.size / 5)
+                } else {
+                    objectPath
+                }
             }
-            else {
-                objectPath
-                    .modifier(pathDragGest(object: object))
-                    .modifier(pathHaveColorPicker(object: object))
-                    .modifier(pathObjectDelete(object: object))
-            }
+            .modifier(pathDragGest(object: object))
+            .modifier(pathHaveColorPicker(object: object))
+            .modifier(pathObjectDelete(object: object))
         }
     }
 }
