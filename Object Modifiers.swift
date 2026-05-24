@@ -15,8 +15,9 @@ struct objectDelete: ViewModifier {
                         try? context.save()
                     }, label: {
                         Image(systemName: "trash.fill")
+                            .resizable()
+                            .frame(width: object.size * 0.33, height: object.size * 0.33)
                     })
-                    .scaleEffect(object.size * 0.02)
                     .position(x: object.posX, y: object.posY)
                 }
                 if(showMod){
@@ -25,14 +26,14 @@ struct objectDelete: ViewModifier {
                         try? context.save()
                     }, label: {
                         Text("Toggle Drag")
+                            .font(.system(size: object.size * 0.08, weight: .bold))
                             .background(
                                 RoundedRectangle(cornerRadius: 20)
                                     .foregroundStyle(.white)
-                                    .frame(width: 100, height: 35)
+                                    .frame(width: object.size * 0.55, height: object.size * 0.15)
+
                             )
                     })
-                    .frame(width: 100, height: 30)
-                    .scaleEffect(object.size * 0.005)
                     .position(CGPoint(x: object.posX, y: object.posY + object.size * 0.4))
                 }
             }
@@ -87,7 +88,6 @@ struct PhotoCopyButton: ViewModifier {
                 if(!showObjectDelete && showCopyButton && object.draggable) {
                     Button(action: {
                         let newObj = Object(x: object.posX, y: object.posY+50, image: object.image, size: object.size, type: object.cardType)
-                        print(newObj.size)
                         newObj.blue = object.blue
                         newObj.red = object.red
                         newObj.green = object.green
@@ -99,11 +99,12 @@ struct PhotoCopyButton: ViewModifier {
                             .foregroundStyle(.gray)
                             .overlay{
                                 Text("Copy")
-                                    .font(.system(size: object.size * 0.3))
+                                    .font(.system(size: object.size * 0.15))
                                     .foregroundStyle(.white)
+                                    .bold()
                             }
                     })
-                    .scaleEffect(0.5)
+                    .frame(width: object.size * 0.5, height: object.size * 0.5)
                     .position(x: object.posX, y: object.posY)
                     
                     //Size Incrementer
@@ -112,12 +113,11 @@ struct PhotoCopyButton: ViewModifier {
                             object.size += 5
                         }, label: {
                             Image(systemName: "plus.circle")
-                                .font(.system(size: 20))
+                                .resizable()
                                 .foregroundStyle(.black)
                                 .background{
                                     Circle()
                                         .foregroundStyle(.green)
-                                        .frame(width: 20, height: 20)
                                 }
                                 .gesture(
                                     DragGesture(minimumDistance: 20)
@@ -125,10 +125,11 @@ struct PhotoCopyButton: ViewModifier {
                                             object.size *= 1.01
                                         })
                                 )
+                                .frame(width: object.size * 0.15, height: object.size * 0.15)
                         })
                         
                         Text("\(Int(object.size))")
-                            .bold()
+                            .font(.system(size: object.size * 0.15, weight: .bold))
                             .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
                         
@@ -136,12 +137,11 @@ struct PhotoCopyButton: ViewModifier {
                             object.size -= 5
                         }, label: {
                             Image(systemName: "minus.circle")
-                                .font(.system(size: 20))
+                                .resizable()
                                 .foregroundStyle(.black)
                                 .background{
                                     Circle()
                                         .foregroundStyle(.red)
-                                        .frame(width: 20, height: 20)
                                 }
                                 .gesture(
                                     DragGesture(minimumDistance: 20)
@@ -149,28 +149,28 @@ struct PhotoCopyButton: ViewModifier {
                                             object.size /= 1.01
                                         })
                                 )
+                                .frame(width: object.size * 0.15, height: object.size * 0.15)
                         })
                     }
-                    .scaleEffect(object.size / 150)
                     .position(CGPoint(x: object.posX + object.size * 0.75, y: object.posY))
                     
                     //Order Incrementer
-                    VStack(spacing: 0) {
+                    VStack(spacing: 5) {
                         Button(action: {
                             object.order += 1
                         }, label: {
                             Image(systemName: "plus.circle")
-                                .font(.system(size: 20))
+                                .resizable()
                                 .foregroundStyle(.black)
                                 .background{
                                     Circle()
                                         .foregroundStyle(.green)
-                                        .frame(width: 20, height: 20)
                                 }
+                                .frame(width: object.size * 0.15, height: object.size * 0.15)
                         })
                         
                         Text("\(object.order)")
-                            .bold()
+                            .font(.system(size: object.size * 0.15, weight: .bold))
                             .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
                         
@@ -178,22 +178,20 @@ struct PhotoCopyButton: ViewModifier {
                             object.order -= 1
                         }, label: {
                             Image(systemName: "minus.circle")
-                                .font(.system(size: 20))
+                                .resizable()
                                 .foregroundStyle(.black)
                                 .background{
                                     Circle()
                                         .foregroundStyle(.red)
-                                        .frame(width: 20, height: 20)
                                 }
+                                .frame(width: object.size * 0.15, height: object.size * 0.15)
                         })
                     }
-                    .scaleEffect(object.size / 150)
                     .position(CGPoint(x: object.posX + object.size * -0.75, y: object.posY))
                 }
                 
                 Text("\(object.cardType)")
-                    .scaleEffect(object.size / 150)
-                    .bold()
+                    .font(.system(size: object.size * 0.1, weight: .bold))
                     .foregroundStyle(.white)
                     .frame(width: object.size * Double(object.cardType.count) / 2)
                     .position(CGPoint(x: object.posX, y: object.posY + object.size * 0.65))
