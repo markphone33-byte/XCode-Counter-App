@@ -22,19 +22,22 @@ struct Map: View {
     @State var isSimpleDraw = false
     @AppStorage("showCopyButton") var showCopyButton : Bool = true
     @State var tempDrawOn = false
+    private var sortedObjects: [Object] {
+        objectList.sorted { o1, o2 in
+            if(o1.order != o2.order) {
+                return o1.order < o2.order
+            }
+            if(o1.size >= 1000) {
+                return o1.size > o2.size
+            }
+            return o1.points.isEmpty && !o2.points.isEmpty
+        }
+    }
     var body: some View {
         ZStack {
             RadialGradient(gradient: Gradient(colors: [.gray, .green, .orange, .red]), center: .center, startRadius: 0, endRadius: size/1.4)
                 .overlay{
-                    ForEach(objectList.sorted(by: { o1, o2 in
-                        if(o1.order != o2.order) {
-                            return o1.order < o2.order
-                        }
-                        if(o1.size >= 1000) {
-                            return o1.size > o2.size
-                        }
-                        return o1.points.isEmpty && !o2.points.isEmpty
-                    })) { object in
+                    ForEach(sortedObjects) { object in
                         ObjectBuilder(object: object, type: $objectType)
                     }
                     Drawing(objectSize: $objectSize, isSimpleDraw: $isSimpleDraw, isDrawing: $isDrawing)
