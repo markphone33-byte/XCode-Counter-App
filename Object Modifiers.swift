@@ -4,7 +4,7 @@ import SwiftData
 struct objectDelete: ViewModifier {
     @Environment(\.modelContext) var context
     @Query var objectList : [Object]
-    @State var object : Object
+    let object : Object
     @AppStorage("showObjectDelete") var showMod : Bool = true
     func body(content: Content) -> some View {
         content
@@ -40,7 +40,7 @@ struct objectDelete: ViewModifier {
 }
 
 struct dragGest: ViewModifier {
-    var object: Object
+    let object: Object
     @State private var dragStartX = 0.0
     @State private var dragStartY = 0.0
     func body(content: Content) -> some View {
@@ -66,7 +66,7 @@ struct dragGest: ViewModifier {
 }
 
 struct frameAndPosition: ViewModifier {
-    var object: Object
+    let object: Object
     func body(content: Content) -> some View {
         content
             .position(CGPoint(x: object.posX, y: object.posY))
@@ -74,54 +74,10 @@ struct frameAndPosition: ViewModifier {
     }
 }
 
-struct haveColorPicker: ViewModifier {
-    @State var object : Object
-    @State var circleColor : UIColor = UIColor(Color(red: 0, green: 0, blue: 0))
-    @State var colorPick : Color = Color(red: 0, green: 0, blue: 0)
-    @State var r : CGFloat = 0
-    @State var g : CGFloat = 0
-    @State var b : CGFloat = 0
-    @State var a : CGFloat = 0
-    @AppStorage("showColorPicker") var showColorPicker : Bool = true
-    func body(content: Content) -> some View {
-        content
-            .foregroundStyle(Color(red: object.red, green: object.green, blue: object.blue, opacity: object.opacity))
-            .overlay {
-                if(showColorPicker && object.isCircle) {
-                    ColorPicker("", selection: $colorPick)
-                        .scaleEffect(object.size < 100 ? object.size * 0.01 : 1)
-                        .position(object.getPos())
-                        .offset(x: cbrt(object.size))
-                        .onChange(of: colorPick) { oldValue, newValue in
-                            circleColor = UIColor(colorPick)
-                            if circleColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
-                                object.red = r
-                                object.green = g
-                                object.blue = b
-                                object.opacity = a
-                            }
-                        }
-                } else if (showColorPicker) {
-                    ColorPicker("", selection: $colorPick)
-                        .scaleEffect(object.size < 100 ? object.size * 0.01 : 1)
-                        .onChange(of: colorPick) { oldValue, newValue in
-                            circleColor = UIColor(colorPick)
-                            if circleColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
-                                object.red = r
-                                object.green = g
-                                object.blue = b
-                                object.opacity = a
-                            }
-                        }
-                }
-            }
-    }
-}
-
 struct PhotoCopyButton: ViewModifier {
     @Environment(\.modelContext) var context
     @Query var objectList : [Object]
-    @State var object : Object
+    let object : Object
     @AppStorage("showObjectDelete") var showObjectDelete : Bool = true
     @AppStorage("showCopyButton") var showCopyButton : Bool = true
     let type : String
