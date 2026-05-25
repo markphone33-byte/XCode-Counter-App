@@ -4,23 +4,36 @@ import SwiftData
 @Model
 class Object {
     var id = UUID()
-    var posX : Double
-    var posY : Double
-    var image : Data?
-    var isCircle : Bool
     var size : Double
     var draggable = true
+    
+    //Inital Position
+    var posX : Double
+    var posY : Double
+    
+    //Used for when user drags objects
+    var offsetX : Double = 0.0
+    var offsetY : Double = 0.0
+    
+    //Color of object
     var red : Double = 0.0
     var green : Double = 0.0
     var blue : Double = 0.0
     var opacity : Double = 0.5
+    
+    //Determines type of object
+    var image : Data?
+    var isCircle : Bool
     var points : [CustomCGPoint] = []
-    var offsetX : Double = 0.0
-    var offsetY : Double = 0.0
     var isSimpleDraw : Bool = false
+    
+    //Display name for photo objects
     var cardType : String = ""
+    
+    //Higher orders values appear on top when objects overlap
     var order : Int = 0
     
+    //Initializer for a regular circle object
     init(x : Double, y: Double, size: Double) {
         posX = x
         posY = y
@@ -30,6 +43,7 @@ class Object {
         opacity = 1.0
     }
     
+    //Initializer for a drawn object
     init(x : Double, y: Double, size: Double, isOutline: Bool, pointList : [CustomCGPoint]) {
         posX = x
         posY = y
@@ -41,6 +55,7 @@ class Object {
         opacity = 1.0
     }
     
+    //Initializer for a photo object
     init(x : Double, y: Double, image: Data?, size: Double, type: String) {
         posX = x
         posY = y
@@ -51,6 +66,7 @@ class Object {
         cardType = type
     }
     
+    //Returns the center of the object, or approximate center for drawn objects
     func getPos() -> CGPoint {
         if(points.isEmpty) {
             return CGPoint(x: posX, y: posY)

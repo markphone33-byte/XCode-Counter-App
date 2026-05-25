@@ -7,15 +7,18 @@ struct InsertMenu: View {
     @State private var newCounter : String = ""
     @State private var newMaxCount : Float = 100.0
     @State private var newColor : String = "Red"
+    
     //Stores Entity List in memory
     @Environment(\.modelContext) var context
     @Query(sort: [SortDescriptor(\Entity.id)]) var entities : [Entity] = []
+    
     //Var determining when user goes to Map view
     @AppStorage("goToMap") var goToMap = false
+    
     var body: some View {
         //HStack for Row 1
         HStack{
-            //Textfields for input on player/counter details
+            //Gets input for a new entity
             TextField("Enter entity name", text: $newName)
                 .textFieldStyle(.roundedBorder)
             TextField("Enter counter name", text: $newCounter)
@@ -25,7 +28,6 @@ struct InsertMenu: View {
             
             //Button to add a new entity or add a new counter to an existing entity
             Button(action: {
-                //Determines if added Entity/Counter is a new one or adding in to an existing one
                 var addToExisting = false
                 for i in entities.indices {
                     if(entities[i].id == newName) {
@@ -39,6 +41,7 @@ struct InsertMenu: View {
                 //Makes new entity
                 if (addToExisting == false) {
                     context.insert(Entity(name: newName, counterName: newCounter, counterMax: newMaxCount))
+                    try? context.save()
                 }
                 
                 //Resets Textfields
@@ -67,20 +70,18 @@ struct InsertMenu: View {
             //HStack for picking the color of a new slider/counter
             HStack (spacing: 0) {
                 Text("Slider Color: ")
-                //Pick between Blue, Red, and Purple
                 Picker("", selection: $newColor, content: {
                     Text("Blue").tag("Blue")
                     Text("Red").tag("Red")
                     Text("Purple").tag("Purple")
                 })
-                //Options colored correspondingly
                 .tint(
                     newColor == "Red" ? .red : newColor == "Blue" ? .blue : .purple
                 )
             }
             //End of HStack for picking the color of a new slider/counter
             
-            //Save Button for both Entity list and Object list used in the Map
+            //Save Button for both Entity list and the Object list used in the Map
             Button(action: {
                 try? context.save()
             }, label: {
@@ -109,5 +110,6 @@ struct InsertMenu: View {
                     .frame(width: 70, height: 30)
             })
         }
+        //End of HStack for Row 2
     }
 }

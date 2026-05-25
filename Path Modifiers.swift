@@ -1,15 +1,16 @@
 import SwiftUI
 import SwiftData
 
+//Used for drawn objects. Adds a trash can button that deletes the object and a button which toggles draggability. Also adds incrementers and decrementers for an object's order value
 struct pathObjectDelete: ViewModifier {
     @Environment(\.modelContext) var context
-    @Query var objectList : [Object]
     @State var object : Object
     @AppStorage("showObjectDelete") var showObjectDelete : Bool = true
     @AppStorage("showCopyButton") var showCopyButton : Bool = true
     func body(content: Content) -> some View {
         content
             .overlay{
+                //Delete Button
                 if(showObjectDelete && object.draggable) {
                     Button(action: {
                         context.delete(object)
@@ -21,6 +22,8 @@ struct pathObjectDelete: ViewModifier {
                     .position(object.getPos())
                     .offset(x: object.offsetX, y: object.offsetY)
                 }
+                
+                //Drag Toggle Button
                 if(showObjectDelete){
                     Button(action: {
                         object.draggable.toggle()
@@ -55,11 +58,13 @@ struct pathObjectDelete: ViewModifier {
                                 }
                         })
                         
+                        //Order Value Displayed
                         Text("Order:\n\(object.order)")
                             .bold()
                             .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
                         
+                        //Order Decrementer
                         Button(action: {
                             object.order -= 1
                         }, label: {
@@ -81,6 +86,7 @@ struct pathObjectDelete: ViewModifier {
     }
 }
 
+//Used for drawn objects. Allows drag movement
 struct pathDragGest: ViewModifier {
     @State var object: Object
     @State var dragOffsetX : Double = 0.0
@@ -102,36 +108,5 @@ struct pathDragGest: ViewModifier {
                     })
                      : nil
             )
-    }
-}
-
-struct pathHaveColorPicker: ViewModifier {
-    @State var object : Object
-    @State var circleColor : UIColor = UIColor(Color(red: 0, green: 0, blue: 0))
-    @State var colorPick : Color = Color(red: 0, green: 0, blue: 0)
-    @State var r : CGFloat = 0
-    @State var g : CGFloat = 0
-    @State var b : CGFloat = 0
-    @State var a : CGFloat = 0
-    @AppStorage("showColorPicker") var showColorPicker : Bool = true
-    func body(content: Content) -> some View {
-        content
-            .foregroundStyle(Color(red: object.red, green: object.green, blue: object.blue, opacity: object.opacity))
-            .overlay {
-                if(showColorPicker) {
-                    ColorPicker("", selection: $colorPick)
-                        .position(object.getPos())
-                        .offset(x: object.offsetX - 25000 - object.size, y: object.offsetY)
-                        .onChange(of: colorPick) { oldValue, newValue in
-                            circleColor = UIColor(colorPick)
-                            if circleColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
-                                object.red = r
-                                object.green = g
-                                object.blue = b
-                                object.opacity = a
-                            }
-                        }
-                }
-            }
     }
 }

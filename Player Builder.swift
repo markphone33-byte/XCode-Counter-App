@@ -2,10 +2,11 @@ import SwiftUI
 import SwiftData
 
 struct PlayerBuilder: View {
-    //Takes in the Entity to be used later in CounterBuilder
     @Bindable var player : Entity
+    
     //Makes a var for background color
     @State var backgroundColor = Color(.clear)
+    
     //Computed property for a sorted list where unhidden comes first then sorted by alphabetical
     private var sortedCounters: [Counter] {
         player.counters.sorted { c1, c2 in
@@ -23,16 +24,11 @@ struct PlayerBuilder: View {
             
             ScrollView (.horizontal) {
                 HStack(spacing: 50) {
-                    
-                    //Color Picker for background of the PlayerBuilder
                     ColorPicker("", selection: $backgroundColor)
-                    
-                    //Makes a CounterBuilder for each counter in the Counter list of the Entity/Player
                     ForEach(sortedCounters) { counter in
-                        CounterBuilder(counters: $player.counters, player: player, counter: counter)
+                        CounterBuilder(player: player, counter: counter)
                     }
                     .offset(x: -50)
-                    //End of ForEach loop
                 }
                 //End of HStack
             }

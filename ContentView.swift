@@ -2,27 +2,27 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    //Stores Entity List in memory
+    //Stores an Entity List in memory
     @Environment(\.modelContext) var context
     @Query(sort: [SortDescriptor(\Entity.id)]) var entities : [Entity] = []
+    
     //Var determining when user goes to Map view
     @AppStorage("goToMap") var goToMap = false
+    
     var body: some View {
-        //Allows navigation to Map view and back
         NavigationStack {
-            //Allows scrolling up and down
-            ScrollView {
-                //Players and UI
+            ScrollView(.vertical) {
                 LazyVStack {
+                    
                     //Textfields and Button for adding a new Entity/Player
                     InsertMenu()
                     
-                    //Makes a Player using PlayerBuilder for each Entity in Entity List
+                    //Makes Entities/Players
                     ForEach(entities) { entity in
                         PlayerBuilder(player: entity)
                     }
                         
-                        //Toggles for showing incrementer and trash can/delete button
+                    //Toggles for showing incrementer and trash can/delete button
                     VStack {
                         Toggles()
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -30,13 +30,13 @@ struct ContentView: View {
                     }
                     
                 }
-                //End of VStack creating players and UI
+                //End of LazyVStack
                 
-                //Moveable notepad
                 Notepad()
             }
-            //Background Color
             .background(Color(red: 0.3, green: 0.4, blue: 0.6, opacity: 0.3))
+            //End of ScrollView
+            
             //When goToMap is true navigates to Map view
             .navigationDestination(isPresented: $goToMap) {
                 Map()
@@ -45,6 +45,7 @@ struct ContentView: View {
                     }
             }
         }
+        //End of NavigationView
     }
 }
 
@@ -54,6 +55,7 @@ struct Toggles: View {
     //Vars tracking incrementer and trash can settings
     @AppStorage("showIncrementer") private var showIncrementer = true
     @AppStorage("showTrashCan") private var showTrashCan = true
+    
     var body: some View {
         Toggle(isOn: $showIncrementer, label: {
             Text("Show Incrementer:")

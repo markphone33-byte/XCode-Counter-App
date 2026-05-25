@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 
+//Used for non-drawn objects. Adds a trash can button that deletes the object and a button which toggles draggability
 struct objectDelete: ViewModifier {
     @Environment(\.modelContext) var context
     @Query var objectList : [Object]
@@ -9,6 +10,7 @@ struct objectDelete: ViewModifier {
     func body(content: Content) -> some View {
         content
             .overlay{
+                //Delete Button
                 if(showMod && object.draggable) {
                     Button(action: {
                         context.delete(object)
@@ -20,6 +22,8 @@ struct objectDelete: ViewModifier {
                     })
                     .position(x: object.posX, y: object.posY)
                 }
+                
+                //Drag Toggle Button
                 if(showMod){
                     Button(action: {
                         object.draggable.toggle()
@@ -40,6 +44,7 @@ struct objectDelete: ViewModifier {
     }
 }
 
+//Used for non-drawn objects. Allows drag movement
 struct dragGest: ViewModifier {
     let object: Object
     @State private var dragStartX = 0.0
@@ -75,6 +80,7 @@ struct frameAndPosition: ViewModifier {
     }
 }
 
+//Adds a button to photo objects which makes a copy of them. Also adds incrementers and decrementers for an object's order value and size. Also adds a label to the bottom with the object's type/name.
 struct PhotoCopyButton: ViewModifier {
     @Environment(\.modelContext) var context
     @Query var objectList : [Object]
@@ -86,6 +92,7 @@ struct PhotoCopyButton: ViewModifier {
         content
             .overlay{
                 if(!showObjectDelete && showCopyButton && object.draggable) {
+                    //Copy Button
                     Button(action: {
                         let newObj = Object(x: object.posX, y: object.posY+50, image: object.image, size: object.size, type: object.cardType)
                         newObj.blue = object.blue
@@ -133,6 +140,7 @@ struct PhotoCopyButton: ViewModifier {
                             .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
                         
+                        //Size Decrementer
                         Button(action: {
                             object.size -= 5
                         }, label: {
@@ -169,11 +177,13 @@ struct PhotoCopyButton: ViewModifier {
                                 .frame(width: object.size * 0.15, height: object.size * 0.15)
                         })
                         
+                        //Order Value Displayed
                         Text("\(object.order)")
                             .font(.system(size: object.size * 0.15, weight: .bold))
                             .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
                         
+                        //Order Decrementer
                         Button(action: {
                             object.order -= 1
                         }, label: {
@@ -190,6 +200,7 @@ struct PhotoCopyButton: ViewModifier {
                     .position(CGPoint(x: object.posX + object.size * -0.75, y: object.posY))
                 }
                 
+                //Name of the object
                 Text("\(object.cardType)")
                     .font(.system(size: object.size * 0.1, weight: .bold))
                     .foregroundStyle(.white)

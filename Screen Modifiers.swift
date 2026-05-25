@@ -1,13 +1,14 @@
 import SwiftUI
 
+//Lets user navigate around the map by dragging
 struct screenDragGest: ViewModifier {
-    @Binding var offsetWidth : Double
-    @Binding var offsetHeight : Double
-    @Binding var dragOffset : CGSize
-    @State var size : Double
+    @AppStorage("offsetWidth") var offsetWidth : Double = 0.0
+    @AppStorage("offsetHeight") var offsetHeight : Double = 0.0
+    @State var dragOffset : CGSize = .zero
+    let mapSize : Double
     func body(content: Content) -> some View {
         content
-            .frame(width: size, height: size)
+            .frame(width: mapSize, height: mapSize)
             .offset(x: offsetWidth + dragOffset.width,
                     y: offsetHeight + dragOffset.height)
             .gesture(
@@ -24,8 +25,9 @@ struct screenDragGest: ViewModifier {
     }
 }
 
+//Lets user zoom in and out of the map
 struct zoomGest: ViewModifier {
-    @AppStorage("scale") var scale : Double = 0.0
+    @AppStorage("scale") var scale : Double = 1.0
     @AppStorage("lastScale") var lastScale : Double = 1.0
     func body(content: Content) -> some View {
         content

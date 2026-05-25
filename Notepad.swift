@@ -1,17 +1,13 @@
-//
-//  Notepad.swift
-//  Counter
-//
-//  Created by Mark Nguyen on 5/21/26.
-//
-
 import SwiftUI
 
 struct Notepad: View {
-    @AppStorage("notes") private var notes = ""
-    @State private var tempNotes = ""
-    @AppStorage("notesOffsetX") private var notesOffsetX = 250.0
-    @AppStorage("notesOffsetY") private var notesOffsetY = 250.0
+    //Notepad Contents
+    @AppStorage("notes") private var notes = "Insert Notes"
+    @State private var tempNotes = "Insert Notes"
+    
+    //Vars for notepad location and dragging logic
+    @AppStorage("notesOffsetX") private var notesOffsetX = 0.0
+    @AppStorage("notesOffsetY") private var notesOffsetY = 0.0
     @State private var currentNotesOffsetX = 0.0
     @State private var currentNotesOffsetY = 0.0
     @State private var dragStartX = 0.0
@@ -22,6 +18,7 @@ struct Notepad: View {
                 .frame(width: 190, height: 290)
                 .border(.black, width: 4)
                 .offset(x: currentNotesOffsetX - 120, y: currentNotesOffsetY)
+                //Notepad updates to get saved values when it appears
                 .onAppear {
                     tempNotes = notes
                     
@@ -31,13 +28,14 @@ struct Notepad: View {
                     dragStartX = notesOffsetX
                     dragStartY = notesOffsetY
                 }
+                //Saves notepad content when it disappears
                 .onDisappear {
                     notes = tempNotes
                 }
-            //Arrows allowing for dragging notepad
+            //Arrows for dragging notepad
             Image("DRAG_VECTOR_ARROWS", bundle: .module)
                 .resizable()
-            //Background and border of image
+                //Background and border of image
                 .background {
                     Circle()
                         .foregroundColor(.black)
@@ -46,7 +44,7 @@ struct Notepad: View {
                         .frame(width: 37, height: 37)
                 }
                 .frame(width: 40, height: 40)
-            //Positions based on vars and changing those vars based on a drag gesture
+                //Positions based on vars and changing those vars based on a drag gesture
                 .offset(x: currentNotesOffsetX, y: currentNotesOffsetY)
                 .gesture(
                     DragGesture()
@@ -63,5 +61,6 @@ struct Notepad: View {
                         })
                 )
         }
+        //End of ZStack
     }
 }

@@ -1,15 +1,20 @@
 import SwiftUI
 
 struct Drawing: View {
-    @Binding var objectSize : Double
+    //For adding drawn objects to objectList
+    let objectSize : Double
+    @Environment(\.modelContext) var context
+    @State private var tempPointList : [CustomCGPoint] = []
+    
+    //Vars determining when these views are active/when user is drawing
     @Binding var isSimpleDraw : Bool
     @Binding var isDrawing : Bool
-    @Environment(\.modelContext) var context
-    @State var tempPointList : [CustomCGPoint] = []
+    
     var body: some View {
         if (isDrawing) {
+            //Covers screen in a transparent gray rectangle where user can draw
             Rectangle()
-                .frame(width: .infinity, height: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .foregroundStyle(.gray)
                 .opacity(0.5)
                 .gesture(
@@ -24,7 +29,10 @@ struct Drawing: View {
                             isSimpleDraw = false
                         })
                 )
+            
+            //Previews for user what the drawing will look like as they draw
             if(!tempPointList.isEmpty) {
+                //Outline of dots for Simple Draw
                 if(isSimpleDraw){
                     ForEach(tempPointList, id: \.self) { point in
                         Circle()
@@ -32,6 +40,8 @@ struct Drawing: View {
                             .position(point.toCGPoint())
                     }
                 }
+                
+                //Organic shape made from connecting shapes for regular draw
                 else{
                     Path { path in
                         let first = tempPointList.first
@@ -46,15 +56,17 @@ struct Drawing: View {
     }
 }
 
+//Allows user to draw many Simple Draws which disappear after user is done drawing
 struct TempDrawing: View {
-    @Binding var objectSize : Double
+    let objectSize : Double
+    @State private var tempPathList : [[CustomCGPoint]] = []
+    @State private var tempPointList : [CustomCGPoint] = []
     @Binding var tempDrawOn : Bool
-    @State var tempPathList : [[CustomCGPoint]] = []
-    @State var tempPointList : [CustomCGPoint] = []
     var body: some View {
         if (tempDrawOn) {
+            //Covers screen in a transparent gray rectangle where user can draw
             Rectangle()
-                .frame(width: .infinity, height: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .foregroundStyle(.gray)
                 .opacity(0.5)
                 .gesture(
@@ -68,12 +80,15 @@ struct TempDrawing: View {
                             tempPointList.removeAll()
                         })
                 )
+                //Exits TempDraw when user double taps
                 .onTapGesture(count: 2, perform: {
                     tempPathList.removeAll()
                     tempPointList.removeAll()
                     tempDrawOn = false
                 })
-            ForEach(tempPathList, id: \.self) { pointList in 
+            
+            //Builds the Simple Draws
+            ForEach(tempPathList, id: \.self) { pointList in
                 if(!pointList.isEmpty) {
                     Path { path in
                         let first = pointList.first
@@ -85,6 +100,8 @@ struct TempDrawing: View {
                     .stroke(lineWidth: objectSize/5)
                 }
             }
+            
+            //Previews for user what the drawing will look like as they draw
             if(!tempPointList.isEmpty) {
                 ForEach(tempPointList, id: \.self) { point in
                     Circle()
